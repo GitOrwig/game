@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const store = require('./store');
 
 const app = express();
 const server = http.createServer(app);
@@ -38,23 +39,23 @@ const WORDS = [
   "whirlpool", "boxing ring", "yoga mat", "zip line"
 ];
 
-// ── Challenge rules added every other round ─────────────────────────────────
+// ── Challenge rules — only real, enforceable ones ───────────────────────────
 const CHALLENGE_RULES = [
   { id: "no-s-words", text: "No words starting with 'S'" },
   { id: "no-yes-no", text: "Can't say 'Yes' or 'No'" },
-  { id: "no-hands", text: "No hand gestures (honor system!)" },
   { id: "no-the-a", text: "Can't say 'the' or 'a'" },
-  { id: "third-person", text: "Must speak in third person" },
-  { id: "include-color", text: "Must include a color in every sentence" },
-  { id: "no-two-syllable-plus", text: "No words with more than 2 syllables" },
-  { id: "must-whisper", text: "Must whisper the entire description" },
+  { id: "no-names", text: "Can't use proper nouns or names" },
   { id: "no-rhyming", text: "Can't use words that rhyme with the target word" },
   { id: "backwards-clue", text: "First clue must describe the opposite" },
   { id: "no-body-parts", text: "Can't reference any body parts" },
-  { id: "must-sing", text: "Must sing your description (honor system!)" },
-  { id: "one-word-clues", text: "Only one-word clues allowed" },
-  { id: "no-verbs", text: "Try to avoid verbs (honor system!)" },
-  { id: "accent-round", text: "Must use a silly accent (honor system!)" },
+  { id: "no-colors", text: "Can't say any colors" },
+  { id: "no-numbers", text: "Can't use any numbers" },
+  { id: "no-e-words", text: "No words starting with 'E'" },
+  { id: "no-like", text: "Can't say 'like' or 'thing'" },
+  { id: "no-negatives", text: "Can't use 'not', 'no', 'never', or 'don't'" },
+  { id: "no-size-words", text: "Can't say 'big', 'small', 'large', or 'tiny'" },
+  { id: "no-it-this", text: "Can't say 'it', 'this', or 'that'" },
+  { id: "three-words-max", text: "Each clue must be 3 words or fewer" },
 ];
 
 // ── Game state per room ─────────────────────────────────────────────────────
@@ -81,21 +82,24 @@ function shuffleArray(arr) {
 function createRoom(code) {
   return {
     code,
-    players: [],          // [{id, name, socketId}]
+    players: [],          // [{id, name, socketId, username}]
     scores: {},           // {playerId: score}
+    turnStats: {          // per-game stats per player
+      p1: { bellsCaught: 0, wordsDescribed: 0, umsGotten: 0 },
+      p2: { bellsCaught: 0, wordsDescribed: 0, umsGotten: 0 },
+    },
     round: 0,
-    turnIndex: 0,         // whose turn (index into players)
+    turnIndex: 0,
     currentWord: null,
     deck: shuffleArray(WORDS),
     deckIndex: 0,
     activeRules: [],
     availableRules: shuffleArray(CHALLENGE_RULES),
     ruleIndex: 0,
-    phase: 'lobby',       // lobby | playing | describing | roundEnd | gameOver
+    phase: 'lobby',
     turnTimeLeft: 60,
     timer: null,
     totalRounds: 10,
-    cardsPerTurn: 1,
   };
 }
 
@@ -135,7 +139,6 @@ function startTurn(room) {
   const describer = getDescriber(room);
   const guesser = getGuesser(room);
 
-  // Send word only to the describer
   io.to(describer.socketId).emit('turn-start', {
     word: room.currentWord,
     role: 'describer',
@@ -146,7 +149,6 @@ function startTurn(room) {
     timeLeft: room.turnTimeLeft,
   });
 
-  // Guesser sees that it's their turn to guess
   io.to(guesser.socketId).emit('turn-start', {
     word: null,
     role: 'guesser',
@@ -157,7 +159,6 @@ function startTurn(room) {
     timeLeft: room.turnTimeLeft,
   });
 
-  // Start countdown
   clearInterval(room.timer);
   room.timer = setInterval(() => {
     room.turnTimeLeft--;
@@ -169,7 +170,7 @@ function startTurn(room) {
   }, 1000);
 }
 
-function endTurn(room, reason, winnerId) {
+function endTurn(room, reason) {
   clearInterval(room.timer);
   room.phase = 'roundEnd';
 
@@ -179,27 +180,43 @@ function endTurn(room, reason, winnerId) {
   let message = '';
   if (reason === 'bell') {
     room.scores[guesser.id]++;
-    message = `🔔 ${guesser.name} rang the bell! They caught an "um"! +1 point for ${guesser.name}`;
+    room.turnStats[guesser.id].bellsCaught++;
+    room.turnStats[describer.id].umsGotten++;
+    message = `\u{1F514} ${guesser.name} rang the bell! They caught an "um"! +1 point for ${guesser.name}`;
   } else if (reason === 'guessed') {
     room.scores[describer.id]++;
-    message = `✅ ${guesser.name} guessed it! The word was "${room.currentWord}". +1 point for ${describer.name}`;
+    room.turnStats[describer.id].wordsDescribed++;
+    message = `\u2705 ${guesser.name} guessed it! The word was "${room.currentWord}". +1 point for ${describer.name}`;
   } else if (reason === 'timeout') {
-    message = `⏰ Time's up! The word was "${room.currentWord}". No points awarded.`;
+    message = `\u23F0 Time's up! The word was "${room.currentWord}". No points awarded.`;
   } else if (reason === 'skip') {
-    message = `⏭️ Card skipped! The word was "${room.currentWord}".`;
+    message = `\u23ED\uFE0F Card skipped! The word was "${room.currentWord}".`;
   }
 
-  // Advance turn
   room.turnIndex = (room.turnIndex + 1) % room.players.length;
   room.round++;
 
-  // Check for new rule every other round
   let newRule = null;
   if (room.round > 0 && room.round % 2 === 0) {
     newRule = addChallengeRule(room);
   }
 
   const gameOver = room.round >= room.totalRounds;
+
+  // Record stats when game ends
+  let finalStats = null;
+  if (gameOver) {
+    room.phase = 'gameOver';
+    const p1 = room.players.find(p => p.id === 'p1');
+    const p2 = room.players.find(p => p.id === 'p2');
+    if (p1 && p2 && p1.username && p2.username) {
+      const updatedStats = store.recordGame(p1.username, p2.username, room.scores, room.turnStats);
+      finalStats = {
+        p1: updatedStats.p1,
+        p2: updatedStats.p2,
+      };
+    }
+  }
 
   io.to(room.code).emit('turn-end', {
     reason,
@@ -212,51 +229,80 @@ function endTurn(room, reason, winnerId) {
     activeRules: room.activeRules,
     gameOver,
     players: room.players.map(p => ({ id: p.id, name: p.name })),
+    turnStats: gameOver ? room.turnStats : undefined,
+    finalStats: finalStats || undefined,
   });
-
-  if (gameOver) {
-    room.phase = 'gameOver';
-  }
 }
 
 // ── Socket.io event handling ────────────────────────────────────────────────
 io.on('connection', (socket) => {
   let currentRoom = null;
   let playerId = null;
+  let loggedInUser = null;    // username if authenticated
 
-  socket.on('create-room', ({ playerName }) => {
+  // ── Auth ────────────────────────────────────────────────────────────────
+  socket.on('signup', ({ username, password }) => {
+    const result = store.createUser(username, password);
+    if (result.ok) {
+      loggedInUser = result.username;
+      socket.emit('auth-ok', { username: result.username, stats: store.getStats(result.username) });
+    } else {
+      socket.emit('auth-error', { message: result.error });
+    }
+  });
+
+  socket.on('login', ({ username, password }) => {
+    const result = store.loginUser(username, password);
+    if (result.ok) {
+      loggedInUser = result.username;
+      socket.emit('auth-ok', { username: result.username, stats: store.getStats(result.username) });
+    } else {
+      socket.emit('auth-error', { message: result.error });
+    }
+  });
+
+  socket.on('get-stats', ({ username }) => {
+    socket.emit('stats-data', { stats: store.getStats(username || loggedInUser) });
+  });
+
+  socket.on('get-leaderboard', () => {
+    socket.emit('leaderboard-data', { leaderboard: store.getLeaderboard() });
+  });
+
+  // ── Room management ─────────────────────────────────────────────────────
+  socket.on('create-room', () => {
+    if (!loggedInUser) { socket.emit('error-msg', { message: 'Please log in first.' }); return; }
+
     let code;
-    do {
-      code = generateRoomCode();
-    } while (rooms.has(code));
+    do { code = generateRoomCode(); } while (rooms.has(code));
 
     const room = createRoom(code);
     playerId = 'p1';
-    room.players.push({ id: playerId, name: playerName, socketId: socket.id });
+    room.players.push({ id: playerId, name: loggedInUser, socketId: socket.id, username: loggedInUser });
     room.scores[playerId] = 0;
     rooms.set(code, room);
     currentRoom = code;
     socket.join(code);
 
-    socket.emit('room-created', { code, playerId, playerName });
+    socket.emit('room-created', { code, playerId, playerName: loggedInUser });
   });
 
-  socket.on('join-room', ({ code, playerName }) => {
+  socket.on('join-room', ({ code }) => {
+    if (!loggedInUser) { socket.emit('error-msg', { message: 'Please log in first.' }); return; }
+
     const roomCode = code.toUpperCase();
     let room = rooms.get(roomCode);
 
-    // If room doesn't exist, create it and wait for the second player
     if (!room) {
       room = createRoom(roomCode);
       playerId = 'p1';
-      room.players.push({ id: playerId, name: playerName, socketId: socket.id });
+      room.players.push({ id: playerId, name: loggedInUser, socketId: socket.id, username: loggedInUser });
       room.scores[playerId] = 0;
       rooms.set(roomCode, room);
       currentRoom = roomCode;
       socket.join(roomCode);
 
-      socket.emit('room-joined', { code: roomCode, playerId, playerName, waiting: true });
-
+      socket.emit('room-joined', { code: roomCode, playerId, playerName: loggedInUser, waiting: true });
       io.to(roomCode).emit('player-joined', {
         players: room.players.map(p => ({ id: p.id, name: p.name })),
       });
@@ -268,15 +314,19 @@ io.on('connection', (socket) => {
       return;
     }
 
+    // Don't let same user join twice
+    if (room.players.some(p => p.username.toLowerCase() === loggedInUser.toLowerCase())) {
+      socket.emit('error-msg', { message: "You're already in this room!" });
+      return;
+    }
+
     playerId = 'p2';
-    room.players.push({ id: playerId, name: playerName, socketId: socket.id });
+    room.players.push({ id: playerId, name: loggedInUser, socketId: socket.id, username: loggedInUser });
     room.scores[playerId] = 0;
     currentRoom = roomCode;
     socket.join(roomCode);
 
-    socket.emit('room-joined', { code: roomCode, playerId, playerName, waiting: false });
-
-    // Notify both players that the room is full and ready
+    socket.emit('room-joined', { code: roomCode, playerId, playerName: loggedInUser, waiting: false });
     io.to(roomCode).emit('player-joined', {
       players: room.players.map(p => ({ id: p.id, name: p.name })),
     });
@@ -303,28 +353,22 @@ io.on('connection', (socket) => {
   socket.on('ring-bell', () => {
     const room = rooms.get(currentRoom);
     if (!room || room.phase !== 'describing') return;
-
     const guesser = getGuesser(room);
-    if (guesser.socketId !== socket.id) return; // only guesser can ring
-
+    if (guesser.socketId !== socket.id) return;
     endTurn(room, 'bell');
   });
 
   socket.on('correct-guess', () => {
     const room = rooms.get(currentRoom);
     if (!room || room.phase !== 'describing') return;
-
-    // Either player can confirm the guess was correct
     endTurn(room, 'guessed');
   });
 
   socket.on('skip-card', () => {
     const room = rooms.get(currentRoom);
     if (!room || room.phase !== 'describing') return;
-
     const describer = getDescriber(room);
-    if (describer.socketId !== socket.id) return; // only describer can skip
-
+    if (describer.socketId !== socket.id) return;
     endTurn(room, 'skip');
   });
 
@@ -332,7 +376,6 @@ io.on('connection', (socket) => {
     const room = rooms.get(currentRoom);
     if (!room || room.phase !== 'roundEnd') return;
     if (room.round >= room.totalRounds) return;
-
     startTurn(room);
   });
 
@@ -340,7 +383,6 @@ io.on('connection', (socket) => {
     const room = rooms.get(currentRoom);
     if (!room) return;
 
-    // Reset game state
     room.round = 0;
     room.turnIndex = 0;
     room.deck = shuffleArray(WORDS);
@@ -350,6 +392,10 @@ io.on('connection', (socket) => {
     room.ruleIndex = 0;
     room.phase = 'lobby';
     room.currentWord = null;
+    room.turnStats = {
+      p1: { bellsCaught: 0, wordsDescribed: 0, umsGotten: 0 },
+      p2: { bellsCaught: 0, wordsDescribed: 0, umsGotten: 0 },
+    };
     for (const p of room.players) {
       room.scores[p.id] = 0;
     }

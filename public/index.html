@@ -38,6 +38,12 @@
     align-items: center;
     justify-content: center;
   }
+  input[type="text"], input[type="password"] {
+    width: 100%; padding: 14px 18px; border-radius: 12px;
+    border: 2px solid #2d2455; background: #130e24; color: var(--text);
+    font-size: 1.05rem; outline: none; transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--accent); }
 
   /* ── Shared ─────────────────────────── */
   h1 { font-size: 2rem; text-align: center; }
@@ -56,19 +62,11 @@
   .btn-green { background: linear-gradient(135deg, var(--green), #38f9d7); color: #111; }
   .btn-gold { background: linear-gradient(135deg, var(--gold), #ffd200); color: #111; }
   .btn-blue { background: linear-gradient(135deg, var(--blue), #764ba2); }
-  .btn-outline {
-    background: transparent; border: 2px solid var(--muted); color: var(--muted);
-  }
+  .btn-outline { background: transparent; border: 2px solid var(--muted); color: var(--muted); }
   .btn-outline:hover { border-color: var(--text); color: var(--text); }
   .btn-small { padding: 10px 20px; font-size: 0.85rem; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-  input[type="text"] {
-    width: 100%; padding: 14px 18px; border-radius: 12px;
-    border: 2px solid #2d2455; background: #130e24; color: var(--text);
-    font-size: 1.05rem; outline: none; transition: border-color 0.2s;
-  }
-  input:focus { border-color: var(--accent); }
   .input-group { width: 100%; margin-bottom: 16px; }
   .input-group label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
@@ -79,16 +77,12 @@
     background: var(--card); border-radius: var(--radius); padding: 28px;
     width: 100%; margin: 16px 0; border: 1px solid #2d2455;
   }
-
   .room-code {
     font-size: 3rem; font-weight: 900; letter-spacing: 12px;
     text-align: center; color: var(--gold);
     text-shadow: 0 0 30px rgba(247,151,30,0.3);
   }
-
-  .scoreboard {
-    display: flex; gap: 16px; width: 100%; margin: 12px 0;
-  }
+  .scoreboard { display: flex; gap: 16px; width: 100%; margin: 12px 0; }
   .score-card {
     flex: 1; background: var(--card); border-radius: var(--radius);
     padding: 16px; text-align: center; border: 1px solid #2d2455;
@@ -98,13 +92,9 @@
   .score-card .score-value { font-size: 2.5rem; font-weight: 900; }
 
   /* ── Timer ──────────────────────────── */
-  .timer-ring {
-    width: 100px; height: 100px; position: relative; margin: 12px auto;
-  }
+  .timer-ring { width: 100px; height: 100px; position: relative; margin: 12px auto; }
   .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .timer-ring circle {
-    fill: none; stroke-width: 6; cx: 50; cy: 50; r: 44;
-  }
+  .timer-ring circle { fill: none; stroke-width: 6; cx: 50; cy: 50; r: 44; }
   .timer-bg { stroke: #2d2455; }
   .timer-fg {
     stroke: var(--green); stroke-linecap: round;
@@ -161,9 +151,7 @@
   }
 
   /* ── Rules ──────────────────────────── */
-  .rules-panel {
-    width: 100%; margin: 8px 0;
-  }
+  .rules-panel { width: 100%; margin: 8px 0; }
   .rules-title {
     font-size: 0.8rem; color: var(--gold); text-transform: uppercase;
     letter-spacing: 2px; font-weight: 700; margin-bottom: 8px;
@@ -176,8 +164,7 @@
   }
   .rule-chip.new-rule {
     animation: rule-glow 1.5s ease-in-out 3;
-    border-color: var(--gold);
-    background: rgba(247,151,30,0.25);
+    border-color: var(--gold); background: rgba(247,151,30,0.25);
   }
   @keyframes rule-glow {
     0%, 100% { box-shadow: 0 0 0 rgba(247,151,30,0); }
@@ -193,14 +180,11 @@
   .role-describer { background: linear-gradient(135deg, var(--blue), #764ba2); }
   .role-guesser { background: linear-gradient(135deg, var(--green), #38f9d7); color: #111; }
 
-  /* ── Result message ─────────────────── */
   .result-message {
     text-align: center; font-size: 1.15rem; padding: 20px;
     border-radius: var(--radius); background: var(--card);
     border: 1px solid #2d2455; margin: 12px 0; line-height: 1.6;
   }
-
-  /* ── New rule alert ─────────────────── */
   .new-rule-alert {
     text-align: center; padding: 20px; margin: 12px 0;
     border-radius: var(--radius); background: rgba(247,151,30,0.1);
@@ -209,7 +193,6 @@
   .new-rule-alert .nra-label { font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
   .new-rule-alert .nra-text { font-size: 1.3rem; font-weight: 800; margin-top: 8px; color: var(--gold); }
 
-  /* ── Game over ──────────────────────── */
   .winner-text {
     font-size: 2rem; font-weight: 900; text-align: center;
     background: linear-gradient(135deg, var(--gold), #ffd200);
@@ -218,45 +201,22 @@
   }
   .crown { font-size: 4rem; text-align: center; margin-bottom: 8px; }
 
-  /* ── Action row ─────────────────────── */
-  .action-row {
-    display: flex; gap: 12px; width: 100%; margin-top: 12px;
-    flex-wrap: wrap; justify-content: center;
-  }
+  .action-row { display: flex; gap: 12px; width: 100%; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+  .round-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
 
-  /* ── Round label ─────────────────────── */
-  .round-label {
-    font-size: 0.8rem; color: var(--muted); text-transform: uppercase;
-    letter-spacing: 2px; font-weight: 600;
-  }
-
-  /* ── Waiting dots ───────────────────── */
-  .waiting-dots::after {
-    content: '';
-    animation: dots 1.5s steps(3) infinite;
-  }
-  @keyframes dots {
-    0% { content: '.'; }
-    33% { content: '..'; }
-    66% { content: '...'; }
-  }
+  .waiting-dots::after { content: ''; animation: dots 1.5s steps(3) infinite; }
+  @keyframes dots { 0% { content: '.'; } 33% { content: '..'; } 66% { content: '...'; } }
 
   .error-msg { color: var(--accent2); font-size: 0.9rem; margin-top: 8px; text-align: center; }
 
-  /* ── Bell ring animation overlay ───── */
   .bell-ring-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(231,76,60,0.25); z-index: 999;
-    animation: flash-bg 0.5s ease-out;
-    pointer-events: none;
+    animation: flash-bg 0.5s ease-out; pointer-events: none;
   }
   .bell-ring-overlay.active { display: block; }
-  @keyframes flash-bg {
-    0% { background: rgba(231,76,60,0.5); }
-    100% { background: rgba(231,76,60,0); }
-  }
+  @keyframes flash-bg { 0% { background: rgba(231,76,60,0.5); } 100% { background: rgba(231,76,60,0); } }
 
-  /* ── Disconnect overlay ─────────────── */
   .disconnect-overlay {
     display: none; position: fixed; inset: 0; z-index: 1000;
     background: rgba(15,10,30,0.92); justify-content: center; align-items: center;
@@ -264,64 +224,162 @@
   }
   .disconnect-overlay.active { display: flex; }
   .disconnect-overlay p { font-size: 1.2rem; color: var(--accent2); }
+
+  /* ── Stats ──────────────────────────── */
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin: 12px 0;
+  }
+  .stat-box {
+    background: var(--card); border-radius: var(--radius); padding: 16px;
+    text-align: center; border: 1px solid #2d2455;
+  }
+  .stat-value { font-size: 2rem; font-weight: 900; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--accent2); }
+  .stat-value.gold { color: var(--gold); }
+  .stat-value.blue { color: var(--blue); }
+  .stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  .stat-box.wide { grid-column: span 2; }
+
+  /* ── Leaderboard ────────────────────── */
+  .lb-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  .lb-table th { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; padding: 8px; text-align: left; border-bottom: 1px solid #2d2455; }
+  .lb-table td { padding: 10px 8px; border-bottom: 1px solid #1a1333; font-size: 0.95rem; }
+  .lb-table tr:nth-child(1) td { color: var(--gold); font-weight: 700; }
+  .lb-table tr:nth-child(2) td { color: #c0c0c0; font-weight: 600; }
+  .lb-table tr:nth-child(3) td { color: #cd7f32; font-weight: 600; }
+  .lb-rank { font-weight: 900; width: 30px; }
+
+  /* ── Welcome bar ────────────────────── */
+  .welcome-bar {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; padding: 10px 16px; border-radius: 12px;
+    background: var(--card); border: 1px solid #2d2455;
+  }
+  .welcome-name { font-weight: 700; color: var(--green); }
+  .welcome-links { display: flex; gap: 12px; }
+  .welcome-links a {
+    color: var(--muted); font-size: 0.85rem; cursor: pointer;
+    text-decoration: none; font-weight: 600;
+  }
+  .welcome-links a:hover { color: var(--text); }
+
+  /* ── Auth toggle ────────────────────── */
+  .auth-toggle {
+    color: var(--blue); cursor: pointer; font-weight: 600;
+    font-size: 0.95rem; margin-top: 12px;
+  }
+  .auth-toggle:hover { text-decoration: underline; }
+
+  /* ── Tab bar ────────────────────────── */
+  .tab-bar { display: flex; gap: 0; width: 100%; margin-bottom: 16px; border-radius: 12px; overflow: hidden; border: 1px solid #2d2455; }
+  .tab-btn {
+    flex: 1; padding: 12px; text-align: center; background: var(--card);
+    color: var(--muted); font-weight: 700; font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+    border: none; transition: all 0.2s;
+  }
+  .tab-btn.active { background: var(--blue); color: #fff; }
+  .tab-btn:hover:not(.active) { background: #221a44; }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- ═══ MENU SCREEN ═══ -->
-  <div id="screen-menu" class="screen active">
+  <!-- ═══ AUTH SCREEN ═══ -->
+  <div id="screen-auth" class="screen active">
     <h1>You Can't Say <span class="um">"Um"</span>!</h1>
-    <p class="subtitle">The word-describing party game. Pick a card, describe the word &mdash; but if you say "um", your opponent rings the bell!</p>
+    <p class="subtitle">Log in or sign up to play</p>
 
     <div class="input-group">
-      <label>Your Name</label>
-      <input type="text" id="input-name" placeholder="Enter your name" maxlength="16" />
+      <label>Username</label>
+      <input type="text" id="auth-username" placeholder="Pick a username" maxlength="16" autocomplete="username" />
     </div>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="auth-password" placeholder="Password" maxlength="64" autocomplete="current-password" />
+    </div>
+
+    <button class="btn btn-primary" id="btn-login" style="width:100%;">Log In</button>
+    <p class="auth-toggle" id="auth-toggle-signup">Don't have an account? Sign up</p>
+    <button class="btn btn-green" id="btn-signup" style="width:100%;display:none;">Sign Up</button>
+    <p class="auth-toggle" id="auth-toggle-login" style="display:none;">Already have an account? Log in</p>
+
+    <div id="auth-error" class="error-msg"></div>
+  </div>
+
+  <!-- ═══ MENU SCREEN ═══ -->
+  <div id="screen-menu" class="screen">
+    <div class="welcome-bar">
+      <span>Welcome, <span class="welcome-name" id="menu-username"></span></span>
+      <div class="welcome-links">
+        <a id="link-stats">Stats</a>
+        <a id="link-logout">Logout</a>
+      </div>
+    </div>
+
+    <h1>You Can't Say <span class="um">"Um"</span>!</h1>
+    <p class="subtitle">Describe the word without saying "um" &mdash; or your buddy rings the bell!</p>
 
     <div class="action-row" style="flex-direction:column;gap:12px;">
       <div style="display:flex;gap:10px;width:100%;">
         <input type="text" id="input-code" placeholder="Room code" maxlength="4" style="text-transform:uppercase;text-align:center;font-weight:800;letter-spacing:6px;flex:1;" />
         <button class="btn btn-blue" id="btn-join">Join</button>
       </div>
-      <p style="text-align:center;color:var(--muted);font-size:0.85rem;">Enter any code &mdash; if the room doesn't exist, it'll be created for you. Share the code with your buddy!</p>
+      <p style="text-align:center;color:var(--muted);font-size:0.85rem;">Enter any code &mdash; if the room doesn't exist, it'll be created. Share the code with your buddy!</p>
       <button class="btn btn-primary" id="btn-create" style="width:100%;">Random Room</button>
     </div>
     <div id="menu-error" class="error-msg"></div>
+  </div>
+
+  <!-- ═══ STATS SCREEN ═══ -->
+  <div id="screen-stats" class="screen">
+    <div class="welcome-bar">
+      <span><span class="welcome-name" id="stats-username"></span></span>
+      <div class="welcome-links">
+        <a id="link-back-menu">Play</a>
+        <a id="link-logout2">Logout</a>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-my-stats">My Stats</button>
+      <button class="tab-btn" id="tab-leaderboard">Leaderboard</button>
+    </div>
+
+    <div id="stats-my" style="width:100%;">
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+
+    <div id="stats-lb" style="width:100%;display:none;">
+      <table class="lb-table" id="lb-table">
+        <thead><tr><th>#</th><th>Player</th><th>W</th><th>L</th><th>Pts</th></tr></thead>
+        <tbody id="lb-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- ═══ LOBBY SCREEN ═══ -->
   <div id="screen-lobby" class="screen">
     <h1>You Can't Say <span class="um">"Um"</span>!</h1>
     <p class="subtitle">Share this code with your buddy:</p>
-
-    <div class="card-box">
-      <div class="room-code" id="lobby-code"></div>
-    </div>
-
+    <div class="card-box"><div class="room-code" id="lobby-code"></div></div>
     <div class="card-box" id="lobby-players">
       <p style="text-align:center;color:var(--muted);" class="waiting-dots">Waiting for opponent</p>
     </div>
-
     <p id="lobby-status" style="text-align:center;color:var(--muted);font-size:0.9rem;margin-top:12px;" class="waiting-dots">Waiting for your buddy to join</p>
   </div>
 
   <!-- ═══ GAME SCREEN ═══ -->
   <div id="screen-game" class="screen">
     <div class="round-label" id="game-round">Round 1 / 10</div>
-
     <div class="scoreboard" id="game-scores"></div>
-
-    <!-- Rules -->
     <div class="rules-panel" id="game-rules" style="display:none;">
       <div class="rules-title">Active Rules</div>
       <div id="rules-chips"></div>
     </div>
-
-    <!-- Role badge -->
     <div id="game-role"></div>
-
-    <!-- Timer -->
     <div class="timer-ring" id="game-timer">
       <svg viewBox="0 0 100 100">
         <circle class="timer-bg" />
@@ -329,11 +387,7 @@
       </svg>
       <div class="timer-text" id="timer-text">60</div>
     </div>
-
-    <!-- Word (only describer sees it) -->
     <div id="game-word-area"></div>
-
-    <!-- Actions -->
     <div class="action-row" id="game-actions"></div>
   </div>
 
@@ -341,16 +395,12 @@
   <div id="screen-round-end" class="screen">
     <div class="round-label" id="re-round"></div>
     <div class="scoreboard" id="re-scores"></div>
-
     <div class="result-message" id="re-message"></div>
-
     <div id="re-new-rule"></div>
-
     <div class="rules-panel" id="re-rules" style="display:none;">
       <div class="rules-title">Active Rules</div>
       <div id="re-rules-chips"></div>
     </div>
-
     <button class="btn btn-primary" id="btn-next" style="width:100%;margin-top:16px;">Next Turn</button>
   </div>
 
@@ -358,10 +408,14 @@
   <div id="screen-gameover" class="screen">
     <div class="crown">&#128081;</div>
     <div class="winner-text" id="go-winner"></div>
-
     <div class="scoreboard" id="go-scores"></div>
 
-    <button class="btn btn-gold" id="btn-play-again" style="width:100%;margin-top:20px;">Play Again</button>
+    <div id="go-game-stats" class="card-box" style="margin-top:12px;"></div>
+
+    <div class="action-row" style="margin-top:16px;">
+      <button class="btn btn-gold" id="btn-play-again" style="flex:1;">Play Again</button>
+      <button class="btn btn-outline" id="btn-back-menu" style="flex:1;">Menu</button>
+    </div>
   </div>
 </div>
 
@@ -374,7 +428,6 @@
 <!-- Sound effects (all synthesized, no files needed) -->
 <script>
 let sfx = null;
-
 function initSFX() {
   if (sfx) return;
   try {
@@ -382,7 +435,6 @@ function initSFX() {
     const master = ctx.createGain();
     master.gain.value = 0.7;
     master.connect(ctx.destination);
-
     function osc(type, freq, startTime, endTime, gainVal, freqEnd, gainEnd) {
       const o = ctx.createOscillator();
       const g = ctx.createGain();
@@ -391,120 +443,36 @@ function initSFX() {
       if (freqEnd !== undefined) o.frequency.exponentialRampToValueAtTime(freqEnd, endTime);
       g.gain.setValueAtTime(gainVal, startTime);
       g.gain.exponentialRampToValueAtTime(gainEnd ?? 0.001, endTime);
-      o.connect(g);
-      g.connect(master);
-      o.start(startTime);
-      o.stop(endTime + 0.05);
+      o.connect(g); g.connect(master);
+      o.start(startTime); o.stop(endTime + 0.05);
     }
-
-    // Noise burst helper (for percussive sounds)
     function noiseBurst(startTime, duration, vol) {
       const bufferSize = ctx.sampleRate * duration;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1);
-      const src = ctx.createBufferSource();
-      src.buffer = buffer;
+      const src = ctx.createBufferSource(); src.buffer = buffer;
       const g = ctx.createGain();
       g.gain.setValueAtTime(vol, startTime);
       g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-      const filt = ctx.createBiquadFilter();
-      filt.type = 'highpass';
-      filt.frequency.value = 3000;
-      src.connect(filt);
-      filt.connect(g);
-      g.connect(master);
-      src.start(startTime);
-      src.stop(startTime + duration + 0.05);
+      const filt = ctx.createBiquadFilter(); filt.type = 'highpass'; filt.frequency.value = 3000;
+      src.connect(filt); filt.connect(g); g.connect(master);
+      src.start(startTime); src.stop(startTime + duration + 0.05);
     }
-
     sfx = {
-      // Bell: metallic ding with harmonics
-      bell() {
-        const t = ctx.currentTime;
-        osc('sine', 1200, t, t + 0.6, 0.5, 800);
-        osc('sine', 2400, t, t + 0.4, 0.25, 1600);
-        osc('sine', 3600, t, t + 0.2, 0.12, 2400);
-        noiseBurst(t, 0.05, 0.3);
-      },
-
-      // Correct: happy ascending three-note chime
-      correct() {
-        const t = ctx.currentTime;
-        osc('sine', 523, t, t + 0.15, 0.4, 523, 0.001);       // C5
-        osc('sine', 659, t + 0.12, t + 0.27, 0.4, 659, 0.001); // E5
-        osc('sine', 784, t + 0.24, t + 0.55, 0.5, 784, 0.001); // G5
-        // shimmer
-        osc('sine', 1568, t + 0.24, t + 0.7, 0.15, 1568, 0.001);
-      },
-
-      // Tick: subtle click for last 10 seconds
-      tick() {
-        const t = ctx.currentTime;
-        osc('sine', 1000, t, t + 0.05, 0.2, 800, 0.001);
-      },
-
-      // Tick urgent: faster for last 5 seconds
-      tickUrgent() {
-        const t = ctx.currentTime;
-        osc('square', 1000, t, t + 0.04, 0.15, 600, 0.001);
-        osc('square', 1000, t + 0.08, t + 0.12, 0.15, 600, 0.001);
-      },
-
-      // Time's up: descending buzzer
-      timeUp() {
-        const t = ctx.currentTime;
-        osc('sawtooth', 440, t, t + 0.15, 0.3, 440, 0.001);
-        osc('sawtooth', 440, t + 0.2, t + 0.35, 0.3, 440, 0.001);
-        osc('sawtooth', 330, t + 0.4, t + 0.7, 0.35, 200, 0.001);
-      },
-
-      // Skip: quick whoosh
-      skip() {
-        const t = ctx.currentTime;
-        noiseBurst(t, 0.2, 0.2);
-        osc('sine', 600, t, t + 0.15, 0.15, 200, 0.001);
-      },
-
-      // New rule: dramatic alert (two-tone)
-      newRule() {
-        const t = ctx.currentTime;
-        osc('triangle', 440, t, t + 0.15, 0.35, 440, 0.001);
-        osc('triangle', 554, t + 0.15, t + 0.3, 0.35, 554, 0.001);
-        osc('triangle', 659, t + 0.3, t + 0.55, 0.4, 659, 0.001);
-        osc('sine', 1318, t + 0.3, t + 0.7, 0.15, 1318, 0.001);
-      },
-
-      // Game start: ready-go fanfare
-      gameStart() {
-        const t = ctx.currentTime;
-        osc('triangle', 392, t, t + 0.12, 0.3, 392, 0.001);       // G4
-        osc('triangle', 392, t + 0.15, t + 0.27, 0.3, 392, 0.001);
-        osc('triangle', 523, t + 0.35, t + 0.6, 0.4, 523, 0.001); // C5
-        osc('sine', 1046, t + 0.35, t + 0.7, 0.15, 1046, 0.001);
-      },
-
-      // Victory: triumphant jingle
-      victory() {
-        const t = ctx.currentTime;
-        const notes = [523, 587, 659, 784, 1046]; // C D E G C
-        notes.forEach((f, i) => {
-          osc('sine', f, t + i * 0.12, t + i * 0.12 + 0.2, 0.35, f, 0.001);
-          osc('triangle', f / 2, t + i * 0.12, t + i * 0.12 + 0.2, 0.15, f / 2, 0.001);
-        });
-        // sparkle
-        osc('sine', 2093, t + 0.55, t + 1.2, 0.12, 2093, 0.001);
-      },
-
-      // Turn start: subtle card-flip swoosh
-      cardFlip() {
-        const t = ctx.currentTime;
-        noiseBurst(t, 0.1, 0.15);
-        osc('sine', 300, t, t + 0.1, 0.1, 600, 0.001);
-      },
+      bell() { const t=ctx.currentTime; osc('sine',1200,t,t+0.6,0.5,800); osc('sine',2400,t,t+0.4,0.25,1600); osc('sine',3600,t,t+0.2,0.12,2400); noiseBurst(t,0.05,0.3); },
+      correct() { const t=ctx.currentTime; osc('sine',523,t,t+0.15,0.4,523,0.001); osc('sine',659,t+0.12,t+0.27,0.4,659,0.001); osc('sine',784,t+0.24,t+0.55,0.5,784,0.001); osc('sine',1568,t+0.24,t+0.7,0.15,1568,0.001); },
+      tick() { const t=ctx.currentTime; osc('sine',1000,t,t+0.05,0.2,800,0.001); },
+      tickUrgent() { const t=ctx.currentTime; osc('square',1000,t,t+0.04,0.15,600,0.001); osc('square',1000,t+0.08,t+0.12,0.15,600,0.001); },
+      timeUp() { const t=ctx.currentTime; osc('sawtooth',440,t,t+0.15,0.3,440,0.001); osc('sawtooth',440,t+0.2,t+0.35,0.3,440,0.001); osc('sawtooth',330,t+0.4,t+0.7,0.35,200,0.001); },
+      skip() { const t=ctx.currentTime; noiseBurst(t,0.2,0.2); osc('sine',600,t,t+0.15,0.15,200,0.001); },
+      newRule() { const t=ctx.currentTime; osc('triangle',440,t,t+0.15,0.35,440,0.001); osc('triangle',554,t+0.15,t+0.3,0.35,554,0.001); osc('triangle',659,t+0.3,t+0.55,0.4,659,0.001); osc('sine',1318,t+0.3,t+0.7,0.15,1318,0.001); },
+      gameStart() { const t=ctx.currentTime; osc('triangle',392,t,t+0.12,0.3,392,0.001); osc('triangle',392,t+0.15,t+0.27,0.3,392,0.001); osc('triangle',523,t+0.35,t+0.6,0.4,523,0.001); osc('sine',1046,t+0.35,t+0.7,0.15,1046,0.001); },
+      victory() { const t=ctx.currentTime; [523,587,659,784,1046].forEach((f,i)=>{osc('sine',f,t+i*0.12,t+i*0.12+0.2,0.35,f,0.001);osc('triangle',f/2,t+i*0.12,t+i*0.12+0.2,0.15,f/2,0.001);}); osc('sine',2093,t+0.55,t+1.2,0.12,2093,0.001); },
+      cardFlip() { const t=ctx.currentTime; noiseBurst(t,0.1,0.15); osc('sine',300,t,t+0.1,0.1,600,0.001); },
     };
   } catch(e) {
-    sfx = { bell(){}, correct(){}, tick(){}, tickUrgent(){}, timeUp(){}, skip(){}, newRule(){}, gameStart(){}, victory(){}, cardFlip(){} };
+    sfx = { bell(){},correct(){},tick(){},tickUrgent(){},timeUp(){},skip(){},newRule(){},gameStart(){},victory(){},cardFlip(){} };
   }
 }
 </script>
@@ -513,11 +481,11 @@ function initSFX() {
 <script>
 const socket = io();
 let myPlayerId = null;
-let myName = '';
+let myUsername = '';
+let myStats = null;
 let players = [];
 let totalRounds = 10;
 
-// ── Elements ────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 const screens = document.querySelectorAll('.screen');
 function showScreen(id) {
@@ -525,32 +493,151 @@ function showScreen(id) {
   $(id).classList.add('active');
 }
 
+// ── Auth ────────────────────────────────────────────────────────────────────
+let authMode = 'login';
+
+$('auth-toggle-signup').onclick = () => {
+  authMode = 'signup';
+  $('btn-login').style.display = 'none';
+  $('auth-toggle-signup').style.display = 'none';
+  $('btn-signup').style.display = '';
+  $('auth-toggle-login').style.display = '';
+  $('auth-error').textContent = '';
+};
+$('auth-toggle-login').onclick = () => {
+  authMode = 'login';
+  $('btn-login').style.display = '';
+  $('auth-toggle-signup').style.display = '';
+  $('btn-signup').style.display = 'none';
+  $('auth-toggle-login').style.display = 'none';
+  $('auth-error').textContent = '';
+};
+
+function doAuth() {
+  const username = $('auth-username').value.trim();
+  const password = $('auth-password').value;
+  if (!username) { $('auth-error').textContent = 'Enter a username.'; return; }
+  if (!password) { $('auth-error').textContent = 'Enter a password.'; return; }
+  initSFX();
+  socket.emit(authMode, { username, password });
+}
+
+$('btn-login').onclick = doAuth;
+$('btn-signup').onclick = doAuth;
+$('auth-password').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
+$('auth-username').addEventListener('keydown', e => { if (e.key === 'Enter') $('auth-password').focus(); });
+
+socket.on('auth-ok', ({ username, stats }) => {
+  myUsername = username;
+  myStats = stats;
+  localStorage.setItem('ucsu-user', username);
+  localStorage.setItem('ucsu-pass', $('auth-password').value);
+  $('menu-username').textContent = username;
+  $('stats-username').textContent = username;
+  showScreen('screen-menu');
+});
+
+socket.on('auth-error', ({ message }) => {
+  $('auth-error').textContent = message;
+});
+
+// Auto-login from localStorage
+const savedUser = localStorage.getItem('ucsu-user');
+const savedPass = localStorage.getItem('ucsu-pass');
+if (savedUser && savedPass) {
+  $('auth-username').value = savedUser;
+  $('auth-password').value = savedPass;
+  socket.emit('login', { username: savedUser, password: savedPass });
+}
+
+// Logout
+function doLogout() {
+  localStorage.removeItem('ucsu-user');
+  localStorage.removeItem('ucsu-pass');
+  myUsername = '';
+  myStats = null;
+  $('auth-username').value = '';
+  $('auth-password').value = '';
+  showScreen('screen-auth');
+}
+$('link-logout').onclick = doLogout;
+$('link-logout2').onclick = doLogout;
+
+// ── Stats screen ────────────────────────────────────────────────────────────
+$('link-stats').onclick = () => {
+  socket.emit('get-stats', { username: myUsername });
+  socket.emit('get-leaderboard');
+  showScreen('screen-stats');
+};
+$('link-back-menu').onclick = () => showScreen('screen-menu');
+
+$('tab-my-stats').onclick = () => {
+  $('tab-my-stats').classList.add('active');
+  $('tab-leaderboard').classList.remove('active');
+  $('stats-my').style.display = '';
+  $('stats-lb').style.display = 'none';
+};
+$('tab-leaderboard').onclick = () => {
+  $('tab-leaderboard').classList.add('active');
+  $('tab-my-stats').classList.remove('active');
+  $('stats-lb').style.display = '';
+  $('stats-my').style.display = 'none';
+  socket.emit('get-leaderboard');
+};
+
+socket.on('stats-data', ({ stats }) => {
+  myStats = stats;
+  const winRate = stats.gamesPlayed > 0 ? Math.round((stats.wins / stats.gamesPlayed) * 100) : 0;
+  $('stats-grid').innerHTML = `
+    <div class="stat-box"><div class="stat-value">${stats.gamesPlayed}</div><div class="stat-label">Games Played</div></div>
+    <div class="stat-box"><div class="stat-value gold">${winRate}%</div><div class="stat-label">Win Rate</div></div>
+    <div class="stat-box"><div class="stat-value green">${stats.wins}</div><div class="stat-label">Wins</div></div>
+    <div class="stat-box"><div class="stat-value red">${stats.losses}</div><div class="stat-label">Losses</div></div>
+    <div class="stat-box"><div class="stat-value blue">${stats.totalPoints}</div><div class="stat-label">Total Points</div></div>
+    <div class="stat-box"><div class="stat-value">${stats.ties}</div><div class="stat-label">Ties</div></div>
+    <div class="stat-box"><div class="stat-value green">${stats.bellsCaught}</div><div class="stat-label">Bells Caught</div></div>
+    <div class="stat-box"><div class="stat-value red">${stats.umsGotten}</div><div class="stat-label">Times Caught</div></div>
+    <div class="stat-box"><div class="stat-value blue">${stats.wordsDescribed}</div><div class="stat-label">Words Described</div></div>
+    <div class="stat-box"><div class="stat-value gold">${stats.bestStreak}</div><div class="stat-label">Best Win Streak</div></div>
+  `;
+});
+
+socket.on('leaderboard-data', ({ leaderboard }) => {
+  if (!leaderboard.length) {
+    $('lb-body').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;">No games played yet</td></tr>';
+    return;
+  }
+  $('lb-body').innerHTML = leaderboard.map((s, i) => `
+    <tr>
+      <td class="lb-rank">${i + 1}</td>
+      <td>${esc(s.username)}${s.username === myUsername ? ' (you)' : ''}</td>
+      <td>${s.wins}</td>
+      <td>${s.losses}</td>
+      <td>${s.totalPoints}</td>
+    </tr>
+  `).join('');
+});
+
 // ── Menu ────────────────────────────────────────────────────────────────────
 $('btn-create').onclick = () => {
-  const name = $('input-name').value.trim();
-  if (!name) { $('menu-error').textContent = 'Enter your name first!'; return; }
   initSFX();
-  myName = name;
-  socket.emit('create-room', { playerName: name });
+  socket.emit('create-room');
 };
-
 $('btn-join').onclick = () => {
-  const name = $('input-name').value.trim();
   const code = $('input-code').value.trim().toUpperCase();
-  if (!name) { $('menu-error').textContent = 'Enter your name first!'; return; }
   if (!code || code.length < 4) { $('menu-error').textContent = 'Enter a 4-letter room code!'; return; }
   initSFX();
-  myName = name;
-  socket.emit('join-room', { code, playerName: name });
+  socket.emit('join-room', { code });
 };
-
-$('input-name').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-create').click(); });
 $('input-code').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-join').click(); });
 
 // ── Lobby ───────────────────────────────────────────────────────────────────
 socket.on('room-created', ({ code, playerId }) => {
   myPlayerId = playerId;
   $('lobby-code').textContent = code;
+  $('lobby-status').textContent = '';
+  $('lobby-status').classList.add('waiting-dots');
+  $('lobby-status').textContent = 'Waiting for your buddy to join';
   showScreen('screen-lobby');
 });
 
@@ -562,11 +649,9 @@ socket.on('room-joined', ({ code, playerId }) => {
 
 socket.on('player-joined', ({ players: pl }) => {
   players = pl;
-  const html = pl.map(p =>
+  $('lobby-players').innerHTML = pl.map(p =>
     `<p style="text-align:center;font-weight:700;font-size:1.15rem;">${esc(p.name)} ${p.id === myPlayerId ? '(you)' : ''}</p>`
   ).join('');
-  $('lobby-players').innerHTML = html;
-
   if (pl.length >= 2) {
     $('lobby-status').textContent = 'Both players in! Starting...';
     $('lobby-status').classList.remove('waiting-dots');
@@ -587,14 +672,9 @@ socket.on('turn-start', ({ word, role, round, activeRules, describer, guesser, t
   showScreen('screen-game');
   $('game-round').textContent = `Round ${round + 1} / ${totalRounds}`;
   if (sfx) sfx.cardFlip();
-
-  // Timer
   updateTimer(timeLeft, 60);
-
-  // Rules
   renderRules(activeRules, 'game-rules', 'rules-chips');
 
-  // Role
   if (role === 'describer') {
     $('game-role').innerHTML = `<div class="role-badge role-describer">You're Describing</div>`;
     $('game-word-area').innerHTML = `<div class="word-display">${esc(word)}</div>`;
@@ -606,26 +686,19 @@ socket.on('turn-start', ({ word, role, round, activeRules, describer, guesser, t
     $('btn-skip').onclick = () => socket.emit('skip-card');
   } else {
     $('game-role').innerHTML = `<div class="role-badge role-guesser">You're Guessing</div>`;
-    $('game-word-area').innerHTML = `
-      <div class="word-hidden">Listen carefully... try to guess the word!</div>
-    `;
+    $('game-word-area').innerHTML = `<div class="word-hidden">Listen carefully... try to guess the word!</div>`;
     $('game-actions').innerHTML = `
       <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
         <button class="bell-btn" id="btn-bell">&#128276;</button>
         <div class="bell-label">Ring the Bell &mdash; they said "um"!</div>
       </div>
     `;
-    $('btn-bell').onclick = () => {
-      socket.emit('ring-bell');
-      flashBell();
-    };
+    $('btn-bell').onclick = () => { socket.emit('ring-bell'); flashBell(); };
   }
 });
 
-// ── Timer tick ──────────────────────────────────────────────────────────────
-socket.on('timer-tick', ({ timeLeft }) => {
-  updateTimer(timeLeft, 60);
-});
+// ── Timer ───────────────────────────────────────────────────────────────────
+socket.on('timer-tick', ({ timeLeft }) => { updateTimer(timeLeft, 60); });
 
 function updateTimer(timeLeft, total) {
   const pct = timeLeft / total;
@@ -639,30 +712,19 @@ function updateTimer(timeLeft, total) {
   }
   const tt = $('timer-text');
   if (tt) tt.textContent = timeLeft;
-
-  // Sound effects for timer
-  if (sfx && timeLeft > 0 && timeLeft <= 5) {
-    sfx.tickUrgent();
-  } else if (sfx && timeLeft > 5 && timeLeft <= 10) {
-    sfx.tick();
-  }
+  if (sfx && timeLeft > 0 && timeLeft <= 5) sfx.tickUrgent();
+  else if (sfx && timeLeft > 5 && timeLeft <= 10) sfx.tick();
 }
 
 // ── Turn end ────────────────────────────────────────────────────────────────
-socket.on('turn-end', ({ reason, message, scores, round, totalRounds: tr, newRule, activeRules, gameOver, players: pl }) => {
-  // Play sound based on what happened
-  if (reason === 'bell') {
-    flashBell();
-  } else if (reason === 'guessed' && sfx) {
-    sfx.correct();
-  } else if (reason === 'timeout' && sfx) {
-    sfx.timeUp();
-  } else if (reason === 'skip' && sfx) {
-    sfx.skip();
-  }
+socket.on('turn-end', ({ reason, message, scores, round, totalRounds: tr, newRule, activeRules, gameOver, players: pl, turnStats, finalStats }) => {
+  if (reason === 'bell') flashBell();
+  else if (reason === 'guessed' && sfx) sfx.correct();
+  else if (reason === 'timeout' && sfx) sfx.timeUp();
+  else if (reason === 'skip' && sfx) sfx.skip();
 
   if (gameOver) {
-    showGameOver(pl, scores);
+    showGameOver(pl, scores, turnStats, finalStats);
     return;
   }
 
@@ -677,19 +739,17 @@ socket.on('turn-end', ({ reason, message, scores, round, totalRounds: tr, newRul
       <div class="new-rule-alert">
         <div class="nra-label">New Rule Added!</div>
         <div class="nra-text">${esc(newRule.text)}</div>
-      </div>
-    `;
+      </div>`;
   } else {
     $('re-new-rule').innerHTML = '';
   }
-
   renderRules(activeRules, 're-rules', 're-rules-chips', newRule?.id);
 });
 
 $('btn-next').onclick = () => socket.emit('next-turn');
 
 // ── Game over ───────────────────────────────────────────────────────────────
-function showGameOver(pl, scores) {
+function showGameOver(pl, scores, turnStats, finalStats) {
   showScreen('screen-gameover');
   renderScoreboard(pl, scores, 'go-scores');
   if (sfx) sfx.victory();
@@ -700,18 +760,33 @@ function showGameOver(pl, scores) {
   } else {
     $('go-winner').textContent = `${sorted[0].name} wins!`;
   }
+
+  // Show game-level stats
+  let statsHtml = '<div style="text-align:center;"><div class="rules-title" style="margin-bottom:12px;">Game Stats</div>';
+  if (turnStats) {
+    pl.forEach(p => {
+      const ts = turnStats[p.id] || {};
+      statsHtml += `<p style="margin:6px 0;font-size:0.9rem;"><strong>${esc(p.name)}</strong>: ${ts.wordsDescribed||0} described, ${ts.bellsCaught||0} bells caught, ${ts.umsGotten||0} caught saying um</p>`;
+    });
+  }
+  if (finalStats) {
+    const me = finalStats[myPlayerId];
+    if (me) {
+      statsHtml += `<p style="margin-top:12px;color:var(--muted);font-size:0.85rem;">Your record: ${me.wins}W - ${me.losses}L - ${me.ties}T (${me.currentStreak} win streak)</p>`;
+    }
+  }
+  statsHtml += '</div>';
+  $('go-game-stats').innerHTML = statsHtml;
 }
 
-$('btn-play-again').onclick = () => {
-  socket.emit('play-again');
-};
+$('btn-play-again').onclick = () => socket.emit('play-again');
+$('btn-back-menu').onclick = () => location.reload();
 
 socket.on('game-reset', ({ players: pl, scores }) => {
   players = pl;
-  const html = pl.map(p =>
+  $('lobby-players').innerHTML = pl.map(p =>
     `<p style="text-align:center;font-weight:700;font-size:1.15rem;">${esc(p.name)} ${p.id === myPlayerId ? '(you)' : ''}</p>`
   ).join('');
-  $('lobby-players').innerHTML = html;
   $('lobby-status').textContent = 'Both players in! Starting...';
   $('lobby-status').classList.remove('waiting-dots');
   showScreen('screen-lobby');
@@ -719,19 +794,12 @@ socket.on('game-reset', ({ players: pl, scores }) => {
 });
 
 // ── Disconnect ──────────────────────────────────────────────────────────────
-socket.on('player-left', () => {
-  $('disconnect-overlay').classList.add('active');
-});
+socket.on('player-left', () => { $('disconnect-overlay').classList.add('active'); });
+socket.on('error-msg', ({ message }) => { $('menu-error').textContent = message; });
 
-// ── Errors ───────────────────────────────────────────────────────────────────
-socket.on('error-msg', ({ message }) => {
-  $('menu-error').textContent = message;
-});
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Helpers ─────────────────────────────────────────────────────────────────
 function renderScoreboard(pl, scores, containerId, activeIdx) {
-  const container = $(containerId);
-  container.innerHTML = pl.map((p, i) => `
+  $(containerId).innerHTML = pl.map((p, i) => `
     <div class="score-card ${i === activeIdx ? 'active-player' : ''}">
       <div class="player-name">${esc(p.name)} ${p.id === myPlayerId ? '(you)' : ''}</div>
       <div class="score-value">${scores[p.id] || 0}</div>
@@ -740,10 +808,7 @@ function renderScoreboard(pl, scores, containerId, activeIdx) {
 }
 
 function renderRules(rules, panelId, chipsId, newRuleId) {
-  if (!rules || rules.length === 0) {
-    $(panelId).style.display = 'none';
-    return;
-  }
+  if (!rules || rules.length === 0) { $(panelId).style.display = 'none'; return; }
   $(panelId).style.display = 'block';
   $(chipsId).innerHTML = rules.map(r =>
     `<span class="rule-chip ${r.id === newRuleId ? 'new-rule' : ''}">${esc(r.text)}</span>`
