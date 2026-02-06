@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You Can't Say Um!</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f0a1e;
+    --card: #1a1333;
+    --accent: #f857a6;
+    --accent2: #ff5858;
+    --green: #43e97b;
+    --gold: #f7971e;
+    --blue: #667eea;
+    --text: #f0e6ff;
+    --muted: #8b7faa;
+    --radius: 16px;
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+  }
+  #app {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Shared ─────────────────────────── */
+  h1 { font-size: 2rem; text-align: center; }
+  h1 span.um { color: var(--accent); }
+  .subtitle { color: var(--muted); text-align: center; margin: 8px 0 24px; font-size: 0.95rem; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 14px 28px; border: none; border-radius: 50px;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    color: #fff; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.4); }
+  .btn:active { transform: translateY(0); }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+  .btn-green { background: linear-gradient(135deg, var(--green), #38f9d7); color: #111; }
+  .btn-gold { background: linear-gradient(135deg, var(--gold), #ffd200); color: #111; }
+  .btn-blue { background: linear-gradient(135deg, var(--blue), #764ba2); }
+  .btn-outline {
+    background: transparent; border: 2px solid var(--muted); color: var(--muted);
+  }
+  .btn-outline:hover { border-color: var(--text); color: var(--text); }
+  .btn-small { padding: 10px 20px; font-size: 0.85rem; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  input[type="text"] {
+    width: 100%; padding: 14px 18px; border-radius: 12px;
+    border: 2px solid #2d2455; background: #130e24; color: var(--text);
+    font-size: 1.05rem; outline: none; transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--accent); }
+  .input-group { width: 100%; margin-bottom: 16px; }
+  .input-group label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+  .screen { display: none; flex-direction: column; align-items: center; width: 100%; }
+  .screen.active { display: flex; }
+
+  .card-box {
+    background: var(--card); border-radius: var(--radius); padding: 28px;
+    width: 100%; margin: 16px 0; border: 1px solid #2d2455;
+  }
+
+  .room-code {
+    font-size: 3rem; font-weight: 900; letter-spacing: 12px;
+    text-align: center; color: var(--gold);
+    text-shadow: 0 0 30px rgba(247,151,30,0.3);
+  }
+
+  .scoreboard {
+    display: flex; gap: 16px; width: 100%; margin: 12px 0;
+  }
+  .score-card {
+    flex: 1; background: var(--card); border-radius: var(--radius);
+    padding: 16px; text-align: center; border: 1px solid #2d2455;
+  }
+  .score-card.active-player { border-color: var(--accent); box-shadow: 0 0 20px rgba(248,87,166,0.15); }
+  .score-card .player-name { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .score-card .score-value { font-size: 2.5rem; font-weight: 900; }
+
+  /* ── Timer ──────────────────────────── */
+  .timer-ring {
+    width: 100px; height: 100px; position: relative; margin: 12px auto;
+  }
+  .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .timer-ring circle {
+    fill: none; stroke-width: 6; cx: 50; cy: 50; r: 44;
+  }
+  .timer-bg { stroke: #2d2455; }
+  .timer-fg {
+    stroke: var(--green); stroke-linecap: round;
+    stroke-dasharray: 276.46; stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear, stroke 0.5s;
+  }
+  .timer-fg.warning { stroke: var(--gold); }
+  .timer-fg.danger { stroke: var(--accent2); }
+  .timer-text {
+    position: absolute; inset: 0; display: flex; align-items: center;
+    justify-content: center; font-size: 1.8rem; font-weight: 900;
+  }
+
+  /* ── Word card ─────────────────────── */
+  .word-display {
+    font-size: 2.2rem; font-weight: 900; text-align: center;
+    padding: 32px 20px; background: linear-gradient(135deg, #1e1745, #2d1f5e);
+    border-radius: var(--radius); margin: 12px 0;
+    border: 2px solid var(--blue);
+    text-transform: uppercase; letter-spacing: 3px;
+    box-shadow: 0 0 40px rgba(102,126,234,0.15);
+  }
+  .word-hidden {
+    font-size: 1.2rem; color: var(--muted); text-align: center;
+    padding: 32px 20px; background: var(--card);
+    border-radius: var(--radius); margin: 12px 0;
+    border: 2px dashed #2d2455;
+  }
+
+  /* ── Bell button ───────────────────── */
+  .bell-btn {
+    width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ff6b6b, #c0392b);
+    border: 6px solid #e74c3c;
+    font-size: 4rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 32px rgba(192,57,43,0.5), inset 0 -4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.1s, box-shadow 0.1s;
+    margin: 16px 0;
+    animation: bell-pulse 2s ease-in-out infinite;
+  }
+  .bell-btn:hover { transform: scale(1.05); }
+  .bell-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 4px 16px rgba(192,57,43,0.4), inset 0 2px 4px rgba(0,0,0,0.3);
+  }
+  @keyframes bell-pulse {
+    0%, 100% { box-shadow: 0 8px 32px rgba(192,57,43,0.5), inset 0 -4px 8px rgba(0,0,0,0.3); }
+    50% { box-shadow: 0 8px 48px rgba(192,57,43,0.7), inset 0 -4px 8px rgba(0,0,0,0.3); }
+  }
+  .bell-label {
+    text-align: center; color: var(--accent2); font-weight: 700;
+    font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;
+  }
+
+  /* ── Rules ──────────────────────────── */
+  .rules-panel {
+    width: 100%; margin: 8px 0;
+  }
+  .rules-title {
+    font-size: 0.8rem; color: var(--gold); text-transform: uppercase;
+    letter-spacing: 2px; font-weight: 700; margin-bottom: 8px;
+  }
+  .rule-chip {
+    display: inline-block; padding: 6px 14px; border-radius: 50px;
+    background: rgba(247,151,30,0.12); border: 1px solid rgba(247,151,30,0.3);
+    color: var(--gold); font-size: 0.82rem; font-weight: 600;
+    margin: 4px 4px 4px 0;
+  }
+  .rule-chip.new-rule {
+    animation: rule-glow 1.5s ease-in-out 3;
+    border-color: var(--gold);
+    background: rgba(247,151,30,0.25);
+  }
+  @keyframes rule-glow {
+    0%, 100% { box-shadow: 0 0 0 rgba(247,151,30,0); }
+    50% { box-shadow: 0 0 16px rgba(247,151,30,0.5); }
+  }
+
+  /* ── Role badge ─────────────────────── */
+  .role-badge {
+    padding: 8px 24px; border-radius: 50px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  .role-describer { background: linear-gradient(135deg, var(--blue), #764ba2); }
+  .role-guesser { background: linear-gradient(135deg, var(--green), #38f9d7); color: #111; }
+
+  /* ── Result message ─────────────────── */
+  .result-message {
+    text-align: center; font-size: 1.15rem; padding: 20px;
+    border-radius: var(--radius); background: var(--card);
+    border: 1px solid #2d2455; margin: 12px 0; line-height: 1.6;
+  }
+
+  /* ── New rule alert ─────────────────── */
+  .new-rule-alert {
+    text-align: center; padding: 20px; margin: 12px 0;
+    border-radius: var(--radius); background: rgba(247,151,30,0.1);
+    border: 2px solid var(--gold); animation: rule-glow 1.5s ease-in-out 3;
+  }
+  .new-rule-alert .nra-label { font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+  .new-rule-alert .nra-text { font-size: 1.3rem; font-weight: 800; margin-top: 8px; color: var(--gold); }
+
+  /* ── Game over ──────────────────────── */
+  .winner-text {
+    font-size: 2rem; font-weight: 900; text-align: center;
+    background: linear-gradient(135deg, var(--gold), #ffd200);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin: 12px 0;
+  }
+  .crown { font-size: 4rem; text-align: center; margin-bottom: 8px; }
+
+  /* ── Action row ─────────────────────── */
+  .action-row {
+    display: flex; gap: 12px; width: 100%; margin-top: 12px;
+    flex-wrap: wrap; justify-content: center;
+  }
+
+  /* ── Round label ─────────────────────── */
+  .round-label {
+    font-size: 0.8rem; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 2px; font-weight: 600;
+  }
+
+  /* ── Waiting dots ───────────────────── */
+  .waiting-dots::after {
+    content: '';
+    animation: dots 1.5s steps(3) infinite;
+  }
+  @keyframes dots {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+  }
+
+  .error-msg { color: var(--accent2); font-size: 0.9rem; margin-top: 8px; text-align: center; }
+
+  /* ── Bell ring animation overlay ───── */
+  .bell-ring-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(231,76,60,0.25); z-index: 999;
+    animation: flash-bg 0.5s ease-out;
+    pointer-events: none;
+  }
+  .bell-ring-overlay.active { display: block; }
+  @keyframes flash-bg {
+    0% { background: rgba(231,76,60,0.5); }
+    100% { background: rgba(231,76,60,0); }
+  }
+
+  /* ── Disconnect overlay ─────────────── */
+  .disconnect-overlay {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(15,10,30,0.92); justify-content: center; align-items: center;
+    flex-direction: column; gap: 16px;
+  }
+  .disconnect-overlay.active { display: flex; }
+  .disconnect-overlay p { font-size: 1.2rem; color: var(--accent2); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══ MENU SCREEN ═══ -->
+  <div id="screen-menu" class="screen active">
+    <h1>You Can't Say <span class="um">"Um"</span>!</h1>
+    <p class="subtitle">The word-describing party game. Pick a card, describe the word &mdash; but if you say "um", your opponent rings the bell!</p>
+
+    <div class="input-group">
+      <label>Your Name</label>
+      <input type="text" id="input-name" placeholder="Enter your name" maxlength="16" />
+    </div>
+
+    <div class="action-row" style="flex-direction:column;gap:12px;">
+      <button class="btn btn-primary" id="btn-create" style="width:100%;">Create Room</button>
+      <div style="display:flex;gap:10px;width:100%;">
+        <input type="text" id="input-code" placeholder="Room code" maxlength="4" style="text-transform:uppercase;text-align:center;font-weight:800;letter-spacing:6px;flex:1;" />
+        <button class="btn btn-blue" id="btn-join">Join</button>
+      </div>
+    </div>
+    <div id="menu-error" class="error-msg"></div>
+  </div>
+
+  <!-- ═══ LOBBY SCREEN ═══ -->
+  <div id="screen-lobby" class="screen">
+    <h1>You Can't Say <span class="um">"Um"</span>!</h1>
+    <p class="subtitle">Share this code with your buddy:</p>
+
+    <div class="card-box">
+      <div class="room-code" id="lobby-code"></div>
+    </div>
+
+    <div class="card-box" id="lobby-players">
+      <p style="text-align:center;color:var(--muted);" class="waiting-dots">Waiting for opponent</p>
+    </div>
+
+    <button class="btn btn-green" id="btn-start" disabled style="width:100%;margin-top:12px;">Start Game</button>
+  </div>
+
+  <!-- ═══ GAME SCREEN ═══ -->
+  <div id="screen-game" class="screen">
+    <div class="round-label" id="game-round">Round 1 / 10</div>
+
+    <div class="scoreboard" id="game-scores"></div>
+
+    <!-- Rules -->
+    <div class="rules-panel" id="game-rules" style="display:none;">
+      <div class="rules-title">Active Rules</div>
+      <div id="rules-chips"></div>
+    </div>
+
+    <!-- Role badge -->
+    <div id="game-role"></div>
+
+    <!-- Timer -->
+    <div class="timer-ring" id="game-timer">
+      <svg viewBox="0 0 100 100">
+        <circle class="timer-bg" />
+        <circle class="timer-fg" id="timer-circle" />
+      </svg>
+      <div class="timer-text" id="timer-text">60</div>
+    </div>
+
+    <!-- Word (only describer sees it) -->
+    <div id="game-word-area"></div>
+
+    <!-- Actions -->
+    <div class="action-row" id="game-actions"></div>
+  </div>
+
+  <!-- ═══ ROUND END SCREEN ═══ -->
+  <div id="screen-round-end" class="screen">
+    <div class="round-label" id="re-round"></div>
+    <div class="scoreboard" id="re-scores"></div>
+
+    <div class="result-message" id="re-message"></div>
+
+    <div id="re-new-rule"></div>
+
+    <div class="rules-panel" id="re-rules" style="display:none;">
+      <div class="rules-title">Active Rules</div>
+      <div id="re-rules-chips"></div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-next" style="width:100%;margin-top:16px;">Next Turn</button>
+  </div>
+
+  <!-- ═══ GAME OVER SCREEN ═══ -->
+  <div id="screen-gameover" class="screen">
+    <div class="crown">&#128081;</div>
+    <div class="winner-text" id="go-winner"></div>
+
+    <div class="scoreboard" id="go-scores"></div>
+
+    <button class="btn btn-gold" id="btn-play-again" style="width:100%;margin-top:20px;">Play Again</button>
+  </div>
+</div>
+
+<div class="bell-ring-overlay" id="bell-overlay"></div>
+<div class="disconnect-overlay" id="disconnect-overlay">
+  <p>Opponent disconnected</p>
+  <button class="btn btn-primary" onclick="location.reload()">Back to Menu</button>
+</div>
+
+<!-- Bell sound (generated inline) -->
+<script>
+function createBellSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    return function playBell() {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(800, ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
+      o.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.3);
+      g.gain.setValueAtTime(0.6, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.start(ctx.currentTime);
+      o.stop(ctx.currentTime + 0.8);
+    };
+  } catch(e) {
+    return function(){};
+  }
+}
+let playBell = null;
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+let myPlayerId = null;
+let myName = '';
+let players = [];
+let totalRounds = 10;
+
+// ── Elements ────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const screens = document.querySelectorAll('.screen');
+function showScreen(id) {
+  screens.forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+// ── Menu ────────────────────────────────────────────────────────────────────
+$('btn-create').onclick = () => {
+  const name = $('input-name').value.trim();
+  if (!name) { $('menu-error').textContent = 'Enter your name first!'; return; }
+  myName = name;
+  socket.emit('create-room', { playerName: name });
+};
+
+$('btn-join').onclick = () => {
+  const name = $('input-name').value.trim();
+  const code = $('input-code').value.trim().toUpperCase();
+  if (!name) { $('menu-error').textContent = 'Enter your name first!'; return; }
+  if (!code || code.length < 4) { $('menu-error').textContent = 'Enter a 4-letter room code!'; return; }
+  myName = name;
+  socket.emit('join-room', { code, playerName: name });
+};
+
+$('input-name').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-create').click(); });
+$('input-code').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-join').click(); });
+
+// ── Lobby ───────────────────────────────────────────────────────────────────
+socket.on('room-created', ({ code, playerId }) => {
+  myPlayerId = playerId;
+  $('lobby-code').textContent = code;
+  showScreen('screen-lobby');
+});
+
+socket.on('room-joined', ({ code, playerId }) => {
+  myPlayerId = playerId;
+  $('lobby-code').textContent = code;
+  showScreen('screen-lobby');
+});
+
+socket.on('player-joined', ({ players: pl }) => {
+  players = pl;
+  const html = pl.map(p =>
+    `<p style="text-align:center;font-weight:700;font-size:1.15rem;">${esc(p.name)} ${p.id === myPlayerId ? '(you)' : ''}</p>`
+  ).join('');
+  $('lobby-players').innerHTML = html;
+  $('btn-start').disabled = pl.length < 2;
+});
+
+$('btn-start').onclick = () => socket.emit('start-game');
+
+// ── Game start ──────────────────────────────────────────────────────────────
+socket.on('game-started', ({ players: pl, scores, totalRounds: tr }) => {
+  players = pl;
+  totalRounds = tr;
+  if (!playBell) playBell = createBellSound();
+});
+
+// ── Turn start ──────────────────────────────────────────────────────────────
+socket.on('turn-start', ({ word, role, round, activeRules, describer, guesser, timeLeft }) => {
+  showScreen('screen-game');
+  $('game-round').textContent = `Round ${round + 1} / ${totalRounds}`;
+
+  // Timer
+  updateTimer(timeLeft, 60);
+
+  // Rules
+  renderRules(activeRules, 'game-rules', 'rules-chips');
+
+  // Role
+  if (role === 'describer') {
+    $('game-role').innerHTML = `<div class="role-badge role-describer">You're Describing</div>`;
+    $('game-word-area').innerHTML = `<div class="word-display">${esc(word)}</div>`;
+    $('game-actions').innerHTML = `
+      <button class="btn btn-green btn-small" id="btn-got-it" style="flex:1;">They Got It!</button>
+      <button class="btn btn-outline btn-small" id="btn-skip" style="flex:1;">Skip Card</button>
+    `;
+    $('btn-got-it').onclick = () => socket.emit('correct-guess');
+    $('btn-skip').onclick = () => socket.emit('skip-card');
+  } else {
+    $('game-role').innerHTML = `<div class="role-badge role-guesser">You're Guessing</div>`;
+    $('game-word-area').innerHTML = `
+      <div class="word-hidden">Listen carefully... try to guess the word!</div>
+    `;
+    $('game-actions').innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+        <button class="bell-btn" id="btn-bell">&#128276;</button>
+        <div class="bell-label">Ring the Bell &mdash; they said "um"!</div>
+      </div>
+    `;
+    $('btn-bell').onclick = () => {
+      socket.emit('ring-bell');
+      flashBell();
+    };
+  }
+});
+
+// ── Timer tick ──────────────────────────────────────────────────────────────
+socket.on('timer-tick', ({ timeLeft }) => {
+  updateTimer(timeLeft, 60);
+});
+
+function updateTimer(timeLeft, total) {
+  const pct = timeLeft / total;
+  const offset = 276.46 * (1 - pct);
+  const circle = $('timer-circle');
+  if (circle) {
+    circle.style.strokeDashoffset = offset;
+    circle.classList.remove('warning', 'danger');
+    if (timeLeft <= 10) circle.classList.add('danger');
+    else if (timeLeft <= 20) circle.classList.add('warning');
+  }
+  const tt = $('timer-text');
+  if (tt) tt.textContent = timeLeft;
+}
+
+// ── Turn end ────────────────────────────────────────────────────────────────
+socket.on('turn-end', ({ reason, message, scores, round, totalRounds: tr, newRule, activeRules, gameOver, players: pl }) => {
+  if (reason === 'bell') flashBell();
+
+  if (gameOver) {
+    showGameOver(pl, scores);
+    return;
+  }
+
+  showScreen('screen-round-end');
+  $('re-round').textContent = `Round ${round} / ${tr} complete`;
+  $('re-message').textContent = message;
+  renderScoreboard(pl, scores, 're-scores');
+
+  if (newRule) {
+    $('re-new-rule').innerHTML = `
+      <div class="new-rule-alert">
+        <div class="nra-label">New Rule Added!</div>
+        <div class="nra-text">${esc(newRule.text)}</div>
+      </div>
+    `;
+  } else {
+    $('re-new-rule').innerHTML = '';
+  }
+
+  renderRules(activeRules, 're-rules', 're-rules-chips', newRule?.id);
+});
+
+$('btn-next').onclick = () => socket.emit('next-turn');
+
+// ── Game over ───────────────────────────────────────────────────────────────
+function showGameOver(pl, scores) {
+  showScreen('screen-gameover');
+  renderScoreboard(pl, scores, 'go-scores');
+
+  const sorted = pl.map(p => ({ ...p, score: scores[p.id] || 0 })).sort((a,b) => b.score - a.score);
+  if (sorted[0].score === sorted[1].score) {
+    $('go-winner').textContent = "It's a tie!";
+  } else {
+    $('go-winner').textContent = `${sorted[0].name} wins!`;
+  }
+}
+
+$('btn-play-again').onclick = () => {
+  socket.emit('play-again');
+};
+
+socket.on('game-reset', ({ players: pl, scores }) => {
+  players = pl;
+  const html = pl.map(p =>
+    `<p style="text-align:center;font-weight:700;font-size:1.15rem;">${esc(p.name)} ${p.id === myPlayerId ? '(you)' : ''}</p>`
+  ).join('');
+  $('lobby-players').innerHTML = html;
+  $('btn-start').disabled = pl.length < 2;
+  showScreen('screen-lobby');
+});
+
+// ── Disconnect ──────────────────────────────────────────────────────────────
+socket.on('player-left', () => {
+  $('disconnect-overlay').classList.add('active');
+});
+
+// ── Errors ───────────────────────────────────────────────────────────────────
+socket.on('error-msg', ({ message }) => {
+  $('menu-error').textContent = message;
+});
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function renderScoreboard(pl, scores, containerId, activeIdx) {
+  const container = $(containerId);
+  container.innerHTML = pl.map((p, i) => `
+    <div class="score-card ${i === activeIdx ? 'active-player' : ''}">
+      <div class="player-name">${esc(p.name)} ${p.id === myPlayerId ? '(you)' : ''}</div>
+      <div class="score-value">${scores[p.id] || 0}</div>
+    </div>
+  `).join('');
+}
+
+function renderRules(rules, panelId, chipsId, newRuleId) {
+  if (!rules || rules.length === 0) {
+    $(panelId).style.display = 'none';
+    return;
+  }
+  $(panelId).style.display = 'block';
+  $(chipsId).innerHTML = rules.map(r =>
+    `<span class="rule-chip ${r.id === newRuleId ? 'new-rule' : ''}">${esc(r.text)}</span>`
+  ).join('');
+}
+
+function flashBell() {
+  if (playBell) playBell();
+  const overlay = $('bell-overlay');
+  overlay.classList.add('active');
+  setTimeout(() => overlay.classList.remove('active'), 500);
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
