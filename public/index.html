@@ -280,11 +280,12 @@
     </div>
 
     <div class="action-row" style="flex-direction:column;gap:12px;">
-      <button class="btn btn-primary" id="btn-create" style="width:100%;">Create Room</button>
       <div style="display:flex;gap:10px;width:100%;">
         <input type="text" id="input-code" placeholder="Room code" maxlength="4" style="text-transform:uppercase;text-align:center;font-weight:800;letter-spacing:6px;flex:1;" />
         <button class="btn btn-blue" id="btn-join">Join</button>
       </div>
+      <p style="text-align:center;color:var(--muted);font-size:0.85rem;">Enter any code &mdash; if the room doesn't exist, it'll be created for you. Share the code with your buddy!</p>
+      <button class="btn btn-primary" id="btn-create" style="width:100%;">Random Room</button>
     </div>
     <div id="menu-error" class="error-msg"></div>
   </div>
@@ -302,7 +303,7 @@
       <p style="text-align:center;color:var(--muted);" class="waiting-dots">Waiting for opponent</p>
     </div>
 
-    <button class="btn btn-green" id="btn-start" disabled style="width:100%;margin-top:12px;">Start Game</button>
+    <p id="lobby-status" style="text-align:center;color:var(--muted);font-size:0.9rem;margin-top:12px;" class="waiting-dots">Waiting for your buddy to join</p>
   </div>
 
   <!-- ═══ GAME SCREEN ═══ -->
@@ -451,10 +452,13 @@ socket.on('player-joined', ({ players: pl }) => {
     `<p style="text-align:center;font-weight:700;font-size:1.15rem;">${esc(p.name)} ${p.id === myPlayerId ? '(you)' : ''}</p>`
   ).join('');
   $('lobby-players').innerHTML = html;
-  $('btn-start').disabled = pl.length < 2;
-});
 
-$('btn-start').onclick = () => socket.emit('start-game');
+  if (pl.length >= 2) {
+    $('lobby-status').textContent = 'Both players in! Starting...';
+    $('lobby-status').classList.remove('waiting-dots');
+    setTimeout(() => socket.emit('start-game'), 1500);
+  }
+});
 
 // ── Game start ──────────────────────────────────────────────────────────────
 socket.on('game-started', ({ players: pl, scores, totalRounds: tr }) => {
@@ -574,8 +578,10 @@ socket.on('game-reset', ({ players: pl, scores }) => {
     `<p style="text-align:center;font-weight:700;font-size:1.15rem;">${esc(p.name)} ${p.id === myPlayerId ? '(you)' : ''}</p>`
   ).join('');
   $('lobby-players').innerHTML = html;
-  $('btn-start').disabled = pl.length < 2;
+  $('lobby-status').textContent = 'Both players in! Starting...';
+  $('lobby-status').classList.remove('waiting-dots');
   showScreen('screen-lobby');
+  setTimeout(() => socket.emit('start-game'), 1500);
 });
 
 // ── Disconnect ──────────────────────────────────────────────────────────────

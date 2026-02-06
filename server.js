@@ -243,12 +243,26 @@ io.on('connection', (socket) => {
 
   socket.on('join-room', ({ code, playerName }) => {
     const roomCode = code.toUpperCase();
-    const room = rooms.get(roomCode);
+    let room = rooms.get(roomCode);
 
+    // If room doesn't exist, create it and wait for the second player
     if (!room) {
-      socket.emit('error-msg', { message: 'Room not found. Check the code and try again.' });
+      room = createRoom(roomCode);
+      playerId = 'p1';
+      room.players.push({ id: playerId, name: playerName, socketId: socket.id });
+      room.scores[playerId] = 0;
+      rooms.set(roomCode, room);
+      currentRoom = roomCode;
+      socket.join(roomCode);
+
+      socket.emit('room-joined', { code: roomCode, playerId, playerName, waiting: true });
+
+      io.to(roomCode).emit('player-joined', {
+        players: room.players.map(p => ({ id: p.id, name: p.name })),
+      });
       return;
     }
+
     if (room.players.length >= 2) {
       socket.emit('error-msg', { message: 'Room is full.' });
       return;
@@ -260,9 +274,9 @@ io.on('connection', (socket) => {
     currentRoom = roomCode;
     socket.join(roomCode);
 
-    socket.emit('room-joined', { code: roomCode, playerId, playerName });
+    socket.emit('room-joined', { code: roomCode, playerId, playerName, waiting: false });
 
-    // Notify both players
+    // Notify both players that the room is full and ready
     io.to(roomCode).emit('player-joined', {
       players: room.players.map(p => ({ id: p.id, name: p.name })),
     });
