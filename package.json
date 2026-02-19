@@ -1,14 +1,13 @@
 {
-  "name": "you-cant-say-um",
+  "name": "speed-circuit",
   "version": "1.0.0",
-  "description": "A multiplayer word description party game - describe the word without saying 'um'!",
+  "description": "A 3D racing game built with Three.js - race against AI opponents on a circuit track",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.7.4"
+    "express": "^4.18.2"
   }
 }
